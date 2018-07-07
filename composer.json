@@ -1,0 +1,30 @@
+{
+    "name": "hiqsol/myi",
+    "type": "library",
+    "description": "Myi",
+    "keywords": [
+        "myi"
+    ],
+    "homepage": "https://github.com/hiqsol/myi",
+    "license": "BSD-3-Clause",
+    "support": {
+        "email": "sol@hiqdev.com",
+        "source": "https://github.com/hiqsol/myi",
+        "issues": "https://github.com/hiqsol/myi/issues",
+        "wiki": "https://github.com/hiqsol/myi/wiki"
+    },
+    "authors": [
+        {
+            "name": "Andrii Vasyliev",
+            "email": "sol@hiqdev.com",
+            "homepage": "http://hiqdev.com/"
+        }
+    ],
+    "require-dev": {
+        "hiqdev/hidev-php": "<2.0 || dev-master",
+        "hiqsol/hidev-hiqsol": "<2.0 || dev-master"
+    },
+    "provides": {
+        "yiisoft/yii2": "*"
+    }
+}

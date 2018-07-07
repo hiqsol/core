@@ -1,0 +1,7 @@
+package:
+    type:       library
+    name:       myi
+    title:      Myi
+    headline:   Myi
+    keywords:   myi
+    license:    BSD-3-Clause
