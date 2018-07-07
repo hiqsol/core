@@ -1,17 +1,17 @@
 {
-    "name": "hiqsol/myi",
+    "name": "hiqsol/core",
     "type": "library",
-    "description": "Myi",
+    "description": "Core",
     "keywords": [
-        "myi"
+        "core"
     ],
-    "homepage": "https://github.com/hiqsol/myi",
+    "homepage": "https://github.com/hiqsol/core",
     "license": "BSD-3-Clause",
     "support": {
         "email": "sol@hiqdev.com",
-        "source": "https://github.com/hiqsol/myi",
-        "issues": "https://github.com/hiqsol/myi/issues",
-        "wiki": "https://github.com/hiqsol/myi/wiki"
+        "source": "https://github.com/hiqsol/core",
+        "issues": "https://github.com/hiqsol/core/issues",
+        "wiki": "https://github.com/hiqsol/core/wiki"
     },
     "authors": [
         {
