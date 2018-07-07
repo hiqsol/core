@@ -24,7 +24,7 @@
         "hiqdev/hidev-php": "<2.0 || dev-master",
         "hiqsol/hidev-hiqsol": "<2.0 || dev-master"
     },
-    "provides": {
+    "replace": {
         "yiisoft/yii2": "*"
     }
 }
