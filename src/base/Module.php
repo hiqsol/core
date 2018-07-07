@@ -7,9 +7,6 @@
 
 namespace yii\base;
 
-use Yii;
-use yii\di\ServiceLocator;
-
 /**
  * Module is the base class for module and application classes.
  *
@@ -39,7 +36,7 @@ use yii\di\ServiceLocator;
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @since 2.0
  */
-class Module extends ServiceLocator
+class Module
 {
     /**
      * @event ActionEvent an event raised before executing a controller action.
@@ -144,6 +141,8 @@ class Module extends ServiceLocator
      */
     private $_version;
 
+    protected $app;
+
 
     /**
      * Constructor.
@@ -154,7 +153,9 @@ class Module extends ServiceLocator
     public function __construct($id, $parent = null, $config = [])
     {
         $this->id = $id;
+        $this->app = $parent->getApp();
         $this->module = $parent;
+    var_dump($this);die;
         parent::__construct($config);
     }
 
@@ -236,7 +237,7 @@ class Module extends ServiceLocator
      */
     public function setBasePath($path)
     {
-        $path = Yii::getAlias($path);
+        $path = $this->app->getAlias($path);
         $p = strncmp($path, 'phar://', 7) === 0 ? $path : realpath($path);
         if ($p !== false && is_dir($p)) {
             $this->_basePath = $p;
