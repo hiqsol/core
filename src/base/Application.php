@@ -9,6 +9,7 @@ namespace yii\base;
 
 use yii\exceptions\InvalidConfigException;
 use yii\exceptions\InvalidArgumentException;
+use yii\di\Container;
 
 /**
  * Application is the base class for all application classes.
@@ -186,7 +187,10 @@ abstract class Application extends Module
      * @var array list of loaded modules indexed by their class names.
      */
     public $loadedModules = [];
-
+    /**
+     * @var Request the current request
+     */
+    protected $request;
 
     /**
      * Constructor.
@@ -194,18 +198,18 @@ abstract class Application extends Module
      * Note that the configuration must contain both [[id]] and [[basePath]].
      * @throws InvalidConfigException if either [[id]] or [[basePath]] configuration is missing.
      */
-    public function __construct($config = [])
+    public function __construct(Request $request)
     {
-        //static::setInstance($this);
         $this->app = $this;
+        $this->request = $request;
 
         $this->state = self::STATE_BEGIN;
 
-        $this->preInit($config);
+        //$this->preInit($config);
 
         //$this->registerErrorHandler($config);
 
-        Component::__construct($config);
+        //Component::__construct($config);
     }
 
     /**
@@ -218,7 +222,6 @@ abstract class Application extends Module
      */
     public function preInit(&$config)
     {
-        var_dump($config);die;
         if (!isset($config['id'])) {
             throw new InvalidConfigException('The "id" configuration for the Application is required.');
         }
@@ -249,11 +252,6 @@ abstract class Application extends Module
             unset($config['timeZone']);
         }
 
-        if (isset($config['container'])) {
-            $this->setContainer($config['container']);
-            unset($config['container']);
-        }
-
         if (isset($config['logger'])) {
             $this->setLogger($config['logger']);
             unset($config['logger']);
@@ -264,14 +262,14 @@ abstract class Application extends Module
             unset($config['profiler']);
         }
 
-        // merge core components with custom components
-        foreach ($this->coreComponents() as $id => $component) {
-            if (!isset($config['components'][$id])) {
-                $config['components'][$id] = $component;
-            } elseif (is_array($config['components'][$id]) && !isset($config['components'][$id]['__class'])) {
-                $config['components'][$id]['__class'] = $component['__class'];
-            }
-        }
+        //    // merge core components with custom components
+        //    foreach ($this->coreComponents() as $id => $component) {
+        //        if (!isset($config['components'][$id])) {
+        //            $config['components'][$id] = $component;
+        //        } elseif (is_array($config['components'][$id]) && !isset($config['components'][$id]['__class'])) {
+        //            $config['components'][$id]['__class'] = $component['__class'];
+        //        }
+        //    }
     }
 
     /**
@@ -379,6 +377,9 @@ abstract class Application extends Module
     {
         parent::setBasePath($path);
         $this->setAlias('@app', $this->getBasePath());
+        if (empty($this->getAlias('@root', false))) {
+            $this->setAlias('@root', dirname(__DIR__, 5));
+        }
     }
 
     /**
@@ -469,7 +470,6 @@ abstract class Application extends Module
      */
     public function setVendorPath($path)
     {
-        var_dump($path);die;
         $this->_vendorPath = $this->getAlias($path);
         $this->setAlias('@vendor', $this->_vendorPath);
         $this->setAlias('@bower', $this->_vendorPath . DIRECTORY_SEPARATOR . 'bower');
@@ -501,180 +501,6 @@ abstract class Application extends Module
         date_default_timezone_set($value);
     }
 
-    /**
-     * Returns the database connection component.
-     * @return \yii\db\Connection the database connection.
-     */
-    public function getDb()
-    {
-        return $this->get('db');
-    }
-
-    /**
-     * Sets up or configure the logger instance.
-     * @param \psr\log\LoggerInterface|\Closure|array|null $logger the logger object or its DI compatible configuration.
-     * @since 3.0.0
-     */
-    public function setLogger($logger)
-    {
-        Yii::setLogger($logger);
-    }
-
-    /**
-     * Returns the logger instance.
-     * @return \psr\log\LoggerInterface the logger instance.
-     * @since 3.0.0
-     */
-    public function getLogger()
-    {
-        return Yii::getLogger();
-    }
-
-    /**
-     * Sets up or configure the profiler instance.
-     * @param \yii\profile\ProfilerInterface|\Closure|array|null $profiler the profiler object or its DI compatible configuration.
-     * @since 3.0.0
-     */
-    public function setProfiler($profiler)
-    {
-        Yii::setProfiler($profiler);
-    }
-
-    /**
-     * Returns the profiler instance.
-     * @return \yii\profile\ProfilerInterface profiler instance.
-     * @since 3.0.0
-     */
-    public function getProfiler()
-    {
-        return Yii::getProfiler();
-    }
-
-    /**
-     * Returns the error handler component.
-     * @return \yii\web\ErrorHandler|\yii\console\ErrorHandler the error handler application component.
-     */
-    public function getErrorHandler()
-    {
-        return $this->get('errorHandler');
-    }
-
-    /**
-     * Returns the cache component.
-     * @return \yii\caching\CacheInterface the cache application component. Null if the component is not enabled.
-     */
-    public function getCache()
-    {
-        return $this->get('cache', false);
-    }
-
-    /**
-     * Returns the formatter component.
-     * @return \yii\i18n\Formatter the formatter application component.
-     */
-    public function getFormatter()
-    {
-        return $this->get('formatter');
-    }
-
-    /**
-     * Returns the request component.
-     * @return \yii\web\Request|\yii\console\Request the request component.
-     */
-    public function getRequest()
-    {
-        return $this->get('request');
-    }
-
-    /**
-     * Returns the response component.
-     * @return \yii\web\Response|\yii\console\Response the response component.
-     */
-    public function getResponse()
-    {
-        return $this->get('response');
-    }
-
-    /**
-     * Returns the view object.
-     * @return View|\yii\web\View the view application component that is used to render various view files.
-     */
-    public function getView()
-    {
-        return $this->get('view');
-    }
-
-    /**
-     * Returns the URL manager for this application.
-     * @return \yii\web\UrlManager the URL manager for this application.
-     */
-    public function getUrlManager()
-    {
-        return $this->get('urlManager');
-    }
-
-    /**
-     * Returns the internationalization (i18n) component.
-     * @return \yii\i18n\I18N the internationalization application component.
-     */
-    public function getI18n()
-    {
-        return $this->get('i18n');
-    }
-
-    /**
-     * Returns the mailer component.
-     * @return \yii\mail\MailerInterface the mailer application component.
-     */
-    public function getMailer()
-    {
-        return $this->get('mailer');
-    }
-
-    /**
-     * Returns the auth manager for this application.
-     * @return \yii\rbac\ManagerInterface the auth manager application component.
-     * Null is returned if auth manager is not configured.
-     */
-    public function getAuthManager()
-    {
-        return $this->get('authManager', false);
-    }
-
-    /**
-     * Returns the asset manager.
-     * @return \yii\web\AssetManager the asset manager application component.
-     */
-    public function getAssetManager()
-    {
-        return $this->get('assetManager');
-    }
-
-    /**
-     * Returns the security component.
-     * @return \yii\base\Security the security application component.
-     */
-    public function getSecurity()
-    {
-        return $this->get('security');
-    }
-
-    /**
-     * Returns the configuration of core application components.
-     * @see set()
-     */
-    public function coreComponents()
-    {
-        return [
-            'security' => ['__class' => Security::class],
-            'formatter' => ['__class' => \yii\i18n\Formatter::class],
-            'i18n' => ['__class' => \yii\i18n\I18N::class],
-            'mailer' => ['__class' => \yii\swiftmailer\Mailer::class],
-            'assetManager' => ['__class' => \yii\web\AssetManager::class],
-            'urlManager' => ['__class' => \yii\web\UrlManager::class],
-            'view' => ['__class' => \yii\web\View::class],
-        ];
-    }
 
     /**
      * Terminates the application.
@@ -704,20 +530,7 @@ abstract class Application extends Module
         exit($status);
     }
 
-    /**
-     * Configures [[Yii::$container]] with the $config.
-     *
-     * @param array $config values given in terms of name-value pairs
-     * @since 2.0.11
-     */
-    public function setContainer($config)
-    {
-        Yii::configure(Yii::$container, $config);
-    }
-
-
-
-    public static $aliases = ['@yii' => __DIR__];
+    public static $aliases = [];
 
     /**
      * Translates a path alias into an actual path.

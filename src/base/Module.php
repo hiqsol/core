@@ -7,6 +7,8 @@
 
 namespace yii\base;
 
+use yii\exceptions\InvalidArgumentException;
+
 /**
  * Module is the base class for module and application classes.
  *
@@ -36,7 +38,7 @@ namespace yii\base;
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @since 2.0
  */
-class Module
+class Module extends Component
 {
     /**
      * @event ActionEvent an event raised before executing a controller action.
@@ -143,6 +145,7 @@ class Module
 
     protected $app;
 
+    protected $container;
 
     /**
      * Constructor.
@@ -255,7 +258,7 @@ class Module
      */
     public function getControllerPath()
     {
-        return Yii::getAlias('@' . str_replace('\\', '/', $this->controllerNamespace));
+        return $this->app->getAlias('@' . str_replace('\\', '/', $this->controllerNamespace));
     }
 
     /**
@@ -278,7 +281,7 @@ class Module
      */
     public function setViewPath($path)
     {
-        $this->_viewPath = Yii::getAlias($path);
+        $this->_viewPath = $this->app->getAlias($path);
     }
 
     /**
@@ -301,7 +304,7 @@ class Module
      */
     public function setLayoutPath($path)
     {
-        $this->_layoutPath = Yii::getAlias($path);
+        $this->_layoutPath = $this->app->getAlias($path);
     }
 
     /**
@@ -359,7 +362,7 @@ class Module
 
     /**
      * Defines path aliases.
-     * This method calls [[Yii::setAlias()]] to register the path aliases.
+     * This method calls [[$this->app->setAlias()]] to register the path aliases.
      * This method is provided so that you can define path aliases when configuring a module.
      * @property array list of path aliases to be defined. The array keys are alias names
      * (must start with `@`) and the array values are the corresponding paths or aliases.
@@ -378,7 +381,7 @@ class Module
     public function setAliases($aliases)
     {
         foreach ($aliases as $name => $alias) {
-            Yii::setAlias($name, $alias);
+            $this->app->setAlias($name, $alias);
         }
     }
 
