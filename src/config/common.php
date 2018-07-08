@@ -1,6 +1,11 @@
 <?php
 
+
 return [
+    \yii\di\Container::class => function ($container) {
+        return $container;
+    },
+
     \yii\base\Application::class => \yii\di\Reference::to('application'),
     'application' => [
         'aliases' => [
@@ -19,4 +24,9 @@ return [
     'i18n' => [
         '__class' => \yii\i18n\I18N::class,
     ],
-];;
+    'logger' => [
+        '__class' => \yii\log\Logger::class,
+    ],
+
+    \Psr\Log\LoggerInterface::class => \yii\di\Reference::to('logger'),
+];
