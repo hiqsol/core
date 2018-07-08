@@ -5,7 +5,7 @@
  * @license http://www.yiiframework.com/license/
  */
 
-namespace yii\base;
+namespace yii\exceptions;
 
 /**
  * Exception represents a generic exception for all purposes.

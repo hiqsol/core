@@ -5,7 +5,7 @@
  * @license http://www.yiiframework.com/license/
  */
 
-namespace yii\base;
+namespace yii\exceptions;
 
 /**
  * UnknownMethodException represents an exception caused by accessing an unknown object method.
