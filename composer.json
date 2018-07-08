@@ -21,9 +21,7 @@
         }
     ],
     "require": {
-        "yiisoft/di": "dev-master",
-        "psr/log": "^1.0",
-        "psr/simple-cache": "^1.0"
+        "yiisoft/di": "dev-master"
     },
     "require-dev": {
         "hiqdev/hidev-php": "<2.0 || dev-master",
