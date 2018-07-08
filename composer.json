@@ -20,6 +20,9 @@
             "homepage": "http://hiqdev.com/"
         }
     ],
+    "require": {
+        "yiisoft/di": "dev-master"
+    },
     "require-dev": {
         "hiqdev/hidev-php": "<2.0 || dev-master",
         "hiqsol/hidev-hiqsol": "<2.0 || dev-master"

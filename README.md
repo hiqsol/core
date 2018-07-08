@@ -7,6 +7,7 @@
 [![Build Status](https://img.shields.io/travis/hiqsol/core.svg)](https://travis-ci.org/hiqsol/core)
 [![Scrutinizer Code Coverage](https://img.shields.io/scrutinizer/coverage/g/hiqsol/core.svg)](https://scrutinizer-ci.com/g/hiqsol/core/)
 [![Scrutinizer Code Quality](https://img.shields.io/scrutinizer/g/hiqsol/core.svg)](https://scrutinizer-ci.com/g/hiqsol/core/)
+[![Dependency Status](https://www.versioneye.com/php/hiqsol:core/dev-master/badge.svg)](https://www.versioneye.com/php/hiqsol:core/dev-master)
 
 ## Installation
 
