@@ -7,7 +7,7 @@
 
 namespace yii\base;
 
-use Yii;
+use yii\di\Container;
 
 /**
  * Request represents a request that is handled by an [[Application]].
@@ -25,6 +25,15 @@ abstract class Request extends Component
     private $_scriptFile;
     private $_isConsoleRequest;
 
+    /**
+     * @var Container
+     */
+    protected $container;
+
+    public function __construct(Container $container)
+    {
+        $this->container = $container;
+    }
 
     /**
      * Resolves the current request into a route and the associated parameters.
