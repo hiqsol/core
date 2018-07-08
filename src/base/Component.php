@@ -117,20 +117,6 @@ class Component extends BaseObject
      */
     private $_behaviors;
 
-    public function __construct($config = [])
-    {
-        /// TODO move to Container::configure
-        foreach ($config as $action => $arguments) {
-            if (substr($action, -2) === '()') {
-                // method call
-                call_user_func_array([$this, substr($action, 0, -2)], $arguments);
-            } else {
-                // property
-                $this->$action = $arguments;
-            }
-        }
-    }
-
     /**
      * Returns the value of a component property.
      *
