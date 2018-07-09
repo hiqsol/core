@@ -32,20 +32,20 @@ to the require section of your composer.json.
 - разделён на части, НЕ радикально, а конструктивно:
     - yiisoft/core - всё кроме выделенных нижеперечисленных частей
     - yiisoft/di - работает как есть без переделки, нашёл пару багов
-    - yiisfot/web - всё из папки web
+    - yiisfot/web - всё из папки web [hiqsol/web]
     - yiisfot/console - всё из папки console, но надо ещё смотреть, не делал ещё
-    - yiisoft/log - всё из папки log, с прицелом на заменяемость любым PSR логгером
+    - yiisoft/log - всё из папки log, с прицелом на заменяемость любым PSR логгером [hiqsol/log]
     - yiisoft/cache - всё из папки cache, с прицелом на заменяемость любым PSR кешом
     - что ещё?
 - в каждой части своя конфигурация, для понимания см. примеры ниже
-    - собирается с помощью composer-config-plugin, можно подумать о другом
-      собирателе конфигов, но этот уже оттесченый
+    - собирается с помощью [composer-config-plugin], можно подумать о другом
+      собирателе конфигов, но этот уже оттесченый, а других нет :)
     - понимаю, спорный момент с первого взгляда, но на самом делал это может
       стать главной фишкой фреймфорка
     - выкидываются нахер всякие coreComponents
-      и костыли в виде мержа кусков конфига раскиданные по коду.
+      и костыли в виде мержа кусков конфига раскиданные по коду
     - конфиг превращается из конфига приложения в конфиг контейнера и в нём уже
-      есть конфиг приложения и сервисов.
+      есть конфиг приложения и сервисов
 - yii2-composer - не нужен
     - тип пакета yii2-extension - не нужен, extension'ы будут просто library
     - ещё yii2-composer собирает extensions.php который используется для алиасов и bootstrap'а
@@ -67,7 +67,8 @@ to the require section of your composer.json.
         - конструктор вызывает `init()`
         - это всё не работает с новым DI так как он:
             - вызывает конструктор, а потом уже устанавливает свойства
-            - теоретически можно вызывать `init()` через конфиг DI, но надо заботится чтоб он вызывался после свойств
+            - теоретически можно вызывать `init()` через конфиг DI,
+              но надо заботится чтоб он вызывался после свойств
     - нужно фиксить все классы где есть `init()`
     - это серьёезный BC-break, но всё становится понятнее
         - не нужно пилить yiisoft/di под `Configurable`
@@ -78,14 +79,21 @@ to the require section of your composer.json.
     - выпиливаются "глобальные переменные" `Yii::$app`, `Yii::$logger` и др.
     - алиасы переносятся в `Application`
     - остаются: `Yii::t()`, `Yii::createObject()` + функции логгинга и профайлинга
-    - стопку define'ов перенёс в `yii\base\Application`
-    - XXX: не придумал как лучше: чтоб оно работало надо делать `Yii::setContainer($container)`
+    - имхо `Yii::createObject()` надо деприкейтить и для начала выпиливать использование,
+      а потом и прибить совсем в пользу `Factory::create()`
+    - стопку define'ов пока перенёс в `yii\base\Application`, но будет перенесена в
+      `src/config/defines.php`, composer-config-plugin собирает и дефайны
+    - XXX: не придумал как лучше: чтоб оно работало надо делать `Yii::setContainer($container)` в entry script'е
 - cleanup
     - папку web заменить на public и алиас `@webroot` заменить на `@public` ?
     - хочу сделать меньше файлов в нагруженых папках (base, web)- чуть больше папок, но не выращивая глубину
         - эксепшены в папку exceptions и в base и в web
         - web/formatters
         - подумать: url, action
+
+[hiqsol/web]:               https://github.com/hiqsol/web
+[hiqsol/log]:               https://github.com/hiqsol/log
+[composer-config-plugin]:   https://github.com/hiqdev/composer-config-plugin
 
 Entry script будет такой:
 
@@ -106,7 +114,7 @@ use yii\helpers\Yii;
 })();
 ```
 
-Часть конфига из `yiisoft/core`:
+Часть конфига из `yiisoft/core`, [src/config/common.php](https://github.com/hiqsol/core/blob/master/src/config/common.php):
 
 ```php
 <?php
@@ -126,7 +134,7 @@ return [
 ];
 ```
 
-Часть конфига из `yiisoft/web`:
+Часть конфига из `yiisoft/web`, [src/config/web.php](https://github.com/hiqsol/web/blob/master/src/config/web.php):
 
 ```php
 <?php
@@ -147,7 +155,7 @@ return [
 ];
 ```
 
-Часть конфига из `yiisoft/console`:
+Часть конфига из `yiisoft/console`, [src/config/console.php](https://github.com/hiqsol/web/blob/master/src/config/console.php):
 
 ```php
 <?php
@@ -168,7 +176,7 @@ return [
 ];
 ```
 
-Часть конфига из `yiisoft/log`:
+Часть конфига из `yiisoft/log`, [src/config/common.php](https://github.com/hiqsol/log/blob/master/src/config/common.php):
 
 ```php
 <?php
