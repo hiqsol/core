@@ -2,6 +2,9 @@
 
 ## [Under development]
 
+- Enabled error handler to work ([@hiqsol])
+- Moved defines from `BaseYii` to `yii\base\Application` ([@hiqsol])
+- Moved `Yii` to helpers ([@hiqsol])
 - Added own configs `common` and `params` ([@hiqsol])
 - Moved exceptions to separate dir ([@hiqsol])
 - Renamed to `core` ([@hiqsol])
