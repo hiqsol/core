@@ -222,10 +222,8 @@ abstract class Application extends Module
      * @var array list of loaded modules indexed by their class names.
      */
     public $loadedModules = [];
-    /**
-     * @var Request the current request
-     */
-    protected $request;
+
+    protected $container;
 
     /**
      * Constructor.
@@ -233,18 +231,32 @@ abstract class Application extends Module
      * Note that the configuration must contain both [[id]] and [[basePath]].
      * @throws InvalidConfigException if either [[id]] or [[basePath]] configuration is missing.
      */
-    public function __construct(Request $request)
+    public function __construct(Container $container)
     {
         $this->app = $this;
-        $this->request = $request;
+
+        $this->container = $container;
 
         $this->state = self::STATE_BEGIN;
 
         //$this->preInit($config);
 
-        //$this->registerErrorHandler($config);
-
         //Component::__construct($config);
+    }
+
+    public function getRequest()
+    {
+        return $this->container->get('request');
+    }
+
+    public function getErrorHandler()
+    {
+        return $this->container->get('errorHandler');
+    }
+
+    public function getView()
+    {
+        return $this->container->get('view');
     }
 
     /**
@@ -375,23 +387,6 @@ abstract class Application extends Module
     }
 
     /**
-     * Registers the errorHandler component as a PHP error handler.
-     * @param array $config application config
-     */
-    protected function registerErrorHandler(&$config)
-    {
-        if (YII_ENABLE_ERROR_HANDLER) {
-            if (!isset($config['components']['errorHandler']['__class'])) {
-                echo "Error: no errorHandler component is configured.\n";
-                exit(1);
-            }
-            $this->set('errorHandler', $config['components']['errorHandler']);
-            unset($config['components']['errorHandler']);
-            $this->getErrorHandler()->register();
-        }
-    }
-
-    /**
      * Returns an ID that uniquely identifies this module among all modules within the current application.
      * Since this is an application instance, it will always return an empty string.
      * @return string the unique ID of the module.
@@ -424,12 +419,16 @@ abstract class Application extends Module
      */
     public function run()
     {
+        if (YII_ENABLE_ERROR_HANDLER) {
+            $this->container->get('errorHandler')->register();
+        }
+
         try {
             $this->state = self::STATE_BEFORE_REQUEST;
             $this->trigger(self::EVENT_BEFORE_REQUEST);
 
             $this->state = self::STATE_HANDLING_REQUEST;
-            $response = $this->handleRequest($this->request);
+            $response = $this->handleRequest($this->getRequest());
 
             $this->state = self::STATE_AFTER_REQUEST;
             $this->trigger(self::EVENT_AFTER_REQUEST);

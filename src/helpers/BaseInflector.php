@@ -7,8 +7,6 @@
 
 namespace yii\helpers;
 
-use Yii;
-
 /**
  * BaseInflector provides concrete implementation for [[Inflector]].
  *
@@ -606,7 +604,7 @@ class BaseInflector
      */
     private static function encoding()
     {
-        return isset(Yii::$app) ? Yii::$app->charset : 'UTF-8';
+        return Yii::getCharset() ?: 'UTF-8';
     }
 
 }

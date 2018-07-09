@@ -8,6 +8,9 @@
 namespace yii\base;
 
 use yii\exceptions\InvalidArgumentException;
+use yii\exceptions\InvalidRouteException;
+use yii\exceptions\InvalidConfigException;
+use yii\helpers\Yii;
 
 /**
  * Module is the base class for module and application classes.
@@ -158,7 +161,6 @@ class Module extends Component
         $this->id = $id;
         $this->app = $parent->getApp();
         $this->module = $parent;
-    var_dump($this);die;
         parent::__construct($config);
     }
 
@@ -527,11 +529,11 @@ class Module extends Component
         if (is_array($parts)) {
             /* @var $controller Controller */
             [$controller, $actionID] = $parts;
-            $oldController = Yii::$app->controller;
-            Yii::$app->controller = $controller;
+            $oldController = $this->app->controller;
+            $this->app->controller = $controller;
             $result = $controller->runAction($actionID, $params);
             if ($oldController !== null) {
-                Yii::$app->controller = $oldController;
+                $this->app->controller = $oldController;
             }
 
             return $result;
@@ -754,13 +756,10 @@ class Module extends Component
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * Since version 2.0.13, if a component isn't defined in the module, it will be looked up in the parent module.
-     * The parent module may be the application.
+     * Is component defined.
      */
-    public function has($id, $checkInstance = false)
+    public function has($id): bool
     {
-        return parent::has($id, $checkInstance) || (isset($this->module) && $this->module->has($id, $checkInstance));
+        return $this->container->has($id);
     }
 }

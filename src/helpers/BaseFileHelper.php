@@ -7,10 +7,9 @@
 
 namespace yii\helpers;
 
-use Yii;
-use yii\base\ErrorException;
-use yii\base\InvalidArgumentException;
-use yii\base\InvalidConfigException;
+use yii\exceptions\ErrorException;
+use yii\exceptions\InvalidConfigException;
+use yii\exceptions\InvalidArgumentException;
 
 /**
  * BaseFileHelper provides concrete implementation for [[FileHelper]].
@@ -32,12 +31,12 @@ class BaseFileHelper
     /**
      * @var string the path (or alias) of a PHP file containing MIME type information.
      */
-    public static $mimeMagicFile = '@yii/helpers/mimeTypes.php';
+    public static $mimeMagicFile = 'mimeTypes.php';
     /**
      * @var string the path (or alias) of a PHP file containing MIME aliases.
      * @since 2.0.14
      */
-    public static $mimeAliasesFile = '@yii/helpers/mimeAliases.php';
+    public static $mimeAliasesFile = 'mimeAliases.php';
 
 
     /**
@@ -103,10 +102,10 @@ class BaseFileHelper
     public static function localize($file, $language = null, $sourceLanguage = null)
     {
         if ($language === null) {
-            $language = Yii::$app->language;
+            $language = Yii::getApp()->language;
         }
         if ($sourceLanguage === null) {
-            $sourceLanguage = Yii::$app->sourceLanguage;
+            $sourceLanguage = Yii::getApp()->sourceLanguage;
         }
         if ($language === $sourceLanguage) {
             return $file;
@@ -142,9 +141,9 @@ class BaseFileHelper
      */
     public static function getMimeType($file, $magicFile = null, $checkExtension = true)
     {
-        if ($magicFile !== null) {
-            $magicFile = Yii::getAlias($magicFile);
-        }
+        // if ($magicFile !== null) {
+        //     $magicFile = Yii::getAlias($magicFile);
+        // }
         if (!extension_loaded('fileinfo')) {
             if ($checkExtension) {
                 return static::getMimeTypeByExtension($file, $magicFile);
@@ -220,7 +219,9 @@ class BaseFileHelper
         if ($magicFile === null) {
             $magicFile = static::$mimeMagicFile;
         }
-        $magicFile = Yii::getAlias($magicFile);
+        if (strncmp($magicFile, '/', 1) !== 0) {
+            $magicFile = __DIR__ . '/' . $magicFile;
+        }
         if (!isset(self::$_mimeTypes[$magicFile])) {
             self::$_mimeTypes[$magicFile] = require $magicFile;
         }
@@ -242,7 +243,9 @@ class BaseFileHelper
         if ($aliasesFile === null) {
             $aliasesFile = static::$mimeAliasesFile;
         }
-        $aliasesFile = Yii::getAlias($aliasesFile);
+        if (strncmp($aliasesFile, '/', 1) !== 0) {
+            $aliasesFile = __DIR__ . '/' . $aliasesFile;
+        }
         if (!isset(self::$_mimeAliases[$aliasesFile])) {
             self::$_mimeAliases[$aliasesFile] = require $aliasesFile;
         }
@@ -626,13 +629,13 @@ class BaseFileHelper
             }
         } catch (\Exception $e) {
             if (!is_dir($path)) {// https://github.com/yiisoft/yii2/issues/9288
-                throw new \yii\base\Exception("Failed to create directory \"$path\": " . $e->getMessage(), $e->getCode(), $e);
+                throw new \yii\exceptions\Exception("Failed to create directory \"$path\": " . $e->getMessage(), $e->getCode(), $e);
             }
         }
         try {
             return chmod($path, $mode);
         } catch (\Exception $e) {
-            throw new \yii\base\Exception("Failed to change permissions for directory \"$path\": " . $e->getMessage(), $e->getCode(), $e);
+            throw new \yii\exceptions\Exception("Failed to change permissions for directory \"$path\": " . $e->getMessage(), $e->getCode(), $e);
         }
     }
 

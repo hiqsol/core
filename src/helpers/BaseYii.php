@@ -9,11 +9,8 @@ namespace yii\helpers;
 
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
-use yii\exceptions\InvalidArgumentException;
 use yii\exceptions\InvalidConfigException;
-use yii\exceptions\UnknownClassException;
 use yii\di\Container;
-use yii\di\Instance;
 use yii\helpers\VarDumper;
 
 /**
@@ -44,6 +41,22 @@ class BaseYii
     public static function getVersion()
     {
         return '3.0.0-dev';
+    }
+
+    public static function getCharset()
+    {
+        return static::get('application')->charset;
+    }
+
+    /// TODO to be removed !!!
+    public static function getApp()
+    {
+        return static::get('application');
+    }
+
+    private static function getFactory()
+    {
+        return static::get('factory');
     }
 
     private static function getProfiler()
