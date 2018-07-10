@@ -23,6 +23,9 @@ return [
 
     \yii\base\Application::class => Reference::to('app'),
     'app' => [
+        'id' => $params['app.id'],
+        'name' => $params['app.name'],
+        'language' => $params['app.language'],
         'aliases' => [
             '@root'     => dirname(__DIR__, 5),
             '@vendor'   => dirname(__DIR__, 4),
