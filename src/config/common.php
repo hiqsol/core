@@ -21,8 +21,8 @@ return [
         '__class' => \yii\di\Injector::class,
     ],
 
-    \yii\base\Application::class => Reference::to('application'),
-    'application' => [
+    \yii\base\Application::class => Reference::to('app'),
+    'app' => [
         'aliases' => [
             '@root'     => dirname(__DIR__, 5),
             '@vendor'   => dirname(__DIR__, 4),
