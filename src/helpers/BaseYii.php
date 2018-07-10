@@ -45,13 +45,13 @@ class BaseYii
 
     public static function getCharset()
     {
-        return static::get('application')->charset;
+        return static::getApp()->charset;
     }
 
     /// TODO to be removed !!!
     public static function getApp()
     {
-        return static::get('application');
+        return static::get('app');
     }
 
     private static function getFactory()

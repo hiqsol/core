@@ -110,7 +110,7 @@ use yii\helpers\Yii;
     $container = new Container(require Builder::path('web'));
     Yii::setContainer($container);
 
-    $container->get('application')->run();
+    $container->get('app')->run();
 })();
 ```
 
@@ -120,8 +120,8 @@ use yii\helpers\Yii;
 <?php
 
 return [
-    \yii\base\Application::class => Reference::to('application'),
-    'application' => [
+    \yii\base\Application::class => Reference::to('app'),
+    'app' => [
         'aliases' => [
             '@root'     => dirname(__DIR__, 5),
             '@vendor'   => dirname(__DIR__, 4),
@@ -140,7 +140,7 @@ return [
 <?php
 
 return [
-    'application' => [
+    'app' => [
         '__class' => \yii\web\Application::class,
         'id' => 'web',
         'name' => 'web',
@@ -161,7 +161,7 @@ return [
 <?php
 
 return [
-    'application' => [
+    'app' => [
         '__class' => \yii\console\Application::class,
         'id' => 'console',
         'name' => 'console',
