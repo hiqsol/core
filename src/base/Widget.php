@@ -8,6 +8,7 @@
 namespace yii\base;
 
 use ReflectionClass;
+use yii\base\Application;
 use yii\helpers\Yii;
 
 /**
@@ -60,14 +61,14 @@ class Widget extends Component implements ViewContextInterface
      */
     public static $stack = [];
 
+    protected $app;
 
     /**
-     * Initializes the object.
-     * This method is called at the end of the constructor.
      * The default implementation will trigger an [[EVENT_INIT]] event.
      */
-    public function __construct()
+    public function __construct(Application $app)
     {
+        $this->app = $app;
         $this->trigger(self::EVENT_INIT);
     }
 
@@ -187,7 +188,7 @@ class Widget extends Component implements ViewContextInterface
     public function getView()
     {
         if ($this->_view === null) {
-            $this->_view = Yii::getApp()->getView();
+            $this->_view = $this->app->getView();
         }
 
         return $this->_view;
