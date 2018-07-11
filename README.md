@@ -38,8 +38,8 @@ to the require section of your composer.json.
     - yiisoft/cache - всё из папки cache, с прицелом на заменяемость любым PSR кешом
     - yiisoft/db - не всегда нужна база
     - yiisoft/rbac - не всегда нужен rbac
-    - можно разделить переводы по языкам
-    - что ещё?
+    - можно переводы по языкам: messages-ru, messages-uk
+    - что ещё? см. [ниже](#parts)
 - в каждой части своя конфигурация, для понимания см. примеры ниже
     - собирается с помощью [composer-config-plugin], можно подумать о другом
       собирателе конфигов, но этот уже оттесченый, а других нет :)
@@ -200,7 +200,7 @@ return [
 | Size    | folder        | destination          | comments                         |
 |--------:|---------------|----------------------|----------------------------------|
 | 1008K   | db            | yiisoft/db           |                                  |
-| 828K    | messages      | yiisoft/core         | split to yiisoft/yii2-lang  ???  |
+| 828K    | messages      | yiisoft/core         | split to yiisoft/messages-ru/uk  ???  |
 | 588K    | web           | yiisoft/web          |                                  |
 | 468K    | helpers       | yiisoft/core         |                                  |
 | 412K    | base          | yiisoft/core         |                                  |
@@ -217,7 +217,7 @@ return [
 | 84K     | log           | yiisoft/log          | provides psr/log                 |
 | 76K     | behaviors     | yiisoft/core         |                                  |
 | 72K     | grid          | yiisoft/core         |                                  |
-| 60K     | di            | yiisoft/di           | psr/container-implementation     |
+| 60K     | di            | yiisoft/di           | provides psr/container-implementation |
 | 52K     | requirements  | yiisoft/core         |                                  |
 | 52K     | mail          | yiisoft/core         |                                  |
 | 44K     | test          | yiisoft/core         | часть в core, часть в db         |
