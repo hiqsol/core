@@ -36,6 +36,9 @@ to the require section of your composer.json.
     - yiisfot/console - всё из папки console, но надо ещё смотреть, не делал ещё
     - yiisoft/log - всё из папки log, с прицелом на заменяемость любым PSR логгером [hiqsol/log]
     - yiisoft/cache - всё из папки cache, с прицелом на заменяемость любым PSR кешом
+    - yiisoft/db - не всегда нужна база
+    - yiisoft/rbac - не всегда нужен rbac
+    - можно разделить переводы по языкам
     - что ещё?
 - в каждой части своя конфигурация, для понимания см. примеры ниже
     - собирается с помощью [composer-config-plugin], можно подумать о другом
@@ -95,7 +98,7 @@ to the require section of your composer.json.
 [hiqsol/log]:               https://github.com/hiqsol/log
 [composer-config-plugin]:   https://github.com/hiqdev/composer-config-plugin
 
-Entry script будет такой:
+### Entry script
 
 ```php
 <?php
@@ -113,6 +116,8 @@ use yii\helpers\Yii;
     $container->get('app')->run();
 })();
 ```
+
+### Config examples
 
 Часть конфига из `yiisoft/core`, [src/config/common.php](https://github.com/hiqsol/core/blob/master/src/config/common.php):
 
@@ -189,6 +194,36 @@ return [
     \Psr\Log\LoggerInterface::class => \yii\di\Reference::to('logger'),
 ];
 ```
+
+### Parts
+
+| Size    | folder        | destination          | comments                         |
+|--------:|---------------|----------------------|----------------------------------|
+| 1008K   | db            | yiisoft/db           |                                  |
+| 828K    | messages      | yiisoft/core         | split to yiisoft/yii2-lang  ???  |
+| 588K    | web           | yiisoft/web          |                                  |
+| 468K    | helpers       | yiisoft/core         |                                  |
+| 412K    | base          | yiisoft/core         |                                  |
+| 292K    | console       | yiisoft/console      |                                  |
+| 212K    | validators    | yiisoft/core         |                                  |
+| 192K    | i18n          | yiisoft/core         |                                  |
+| 168K    | widgets       | yiisoft/core         |                                  |
+| 152K    | caching       | yiisoft/cache        | provides psr/simple-cache        |
+| 148K    | rbac          | yiisoft/rbac         |                                  |
+| 132K    | filters       | yiisoft/web          |                                  |
+| 124K    | views         | yiisoft/core         |                                  |
+| 116K    | data          | yiisoft/core         |                                  |
+| 84K     | http          | yiisoft/core         |                                  |
+| 84K     | log           | yiisoft/log          | provides psr/log                 |
+| 76K     | behaviors     | yiisoft/core         |                                  |
+| 72K     | grid          | yiisoft/core         |                                  |
+| 60K     | di            | yiisoft/di           | psr/container-implementation     |
+| 52K     | requirements  | yiisoft/core         |                                  |
+| 52K     | mail          | yiisoft/core         |                                  |
+| 44K     | test          | yiisoft/core         | часть в core, часть в db         |
+| 36K     | mutex         | yiisoft/core         |                                  |
+| 28K     | profile       | yiisoft/core         |                                  |
+| 24K     | serialize     | yiisoft/core         |                                  |
 
 ## License
 
