@@ -33,6 +33,10 @@ return [
         'params' => $params,
     ],
 
+    \Psr\Log\LoggerInterface::class => Reference::to('logger'),
+    'logger' => [
+    ],
+
     \yii\base\ErrorHandler::class => Reference::to('errorHandler'),
     'errorHandler' => [
     ],
@@ -49,6 +53,11 @@ return [
     'response' => [
     ],
 
+    \yii\profile\ProfilerInterface::class => Reference::to('profiler'),
+    'profiler' => [
+        '__class' => \yii\profile\Profiler::class,
+    ],
+
     'security' => [
         '__class' => \yii\base\Security::class,
     ],
@@ -57,10 +66,14 @@ return [
     ],
     'i18n' => [
         '__class' => \yii\i18n\I18N::class,
+        'translations' => [
+            '*' => [
+                '__class' => yii\i18n\PhpMessageSource::class,
+            ],
+        ],
     ],
-    'profiler' => [
-        '__class' => \yii\profile\Profiler::class,
+    'mutex' => [
+        '__class' => yii\mutex\FileMutex::class
     ],
 
-    \yii\profile\ProfilerInterface::class => Reference::to('profiler'),
 ];
