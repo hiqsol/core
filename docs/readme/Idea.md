@@ -10,6 +10,9 @@
     - yiisoft/rbac - не всегда нужен rbac
     - можно переводы по языкам: messages-ru, messages-uk
     - что ещё? см. [ниже](#parts)
+- yiisfot/core requires any psr implementations instead of concrete yii packages
+    - actually it will not work right now, but it's a declaration of intentions
+      and will be implemented sooner or later
 - в каждой части своя конфигурация, для понимания см. примеры ниже
     - собирается с помощью [composer-config-plugin], можно подумать о другом
       собирателе конфигов, но этот уже оттесченый, а других нет :)

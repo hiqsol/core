@@ -21,7 +21,7 @@
         }
     ],
     "require": {
-        "yiisoft/di": "dev-master"
+        "psr/container-implementation": "^1.0"
     },
     "require-dev": {
         "hiqdev/hidev-php": "<2.0 || dev-master",
