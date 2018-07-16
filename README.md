@@ -16,11 +16,11 @@ This package is Yii 3.0 architecture changes proposal.
 ## Idea
 
 - framework gets split into parts, not radically, but functionally
-    - `yiisoft/core` - everything byt all the following
+    - `yiisoft/core` - all former framework byt all the following
     - `yiisoft/di` - as is, fixed some bugs
     - `yiisfot/web` - everything from `web` and `filter` folders, can be used without yiisoft/console
     - `yiisfot/console` - everything from `console` folder, can be used without yiisoft/web
-    - `yiisoft/log` - everything from `log` folder
+    - `yiisoft/log` - everything from `log` folder, any PSR compatible cache could be used, can be done framework independent
     - `yiisoft/cache` - everything from `caching` folder, any PSR compatible cache could be used, can be done framework independent
     - `yiisoft/db` - not all apps need it, can be done framework independent
     - `yiisoft/rbac` - not all apps need it, can be done framework independent
@@ -28,6 +28,7 @@ This package is Yii 3.0 architecture changes proposal.
         - grid
         - widgets
         - split db and ActiveRecord
+    - also please see discussion https://github.com/hiqsol/core/issues/1
 - `yiisfot/core` requires only virtual psr implementations instead of concrete yii packages
     - actually not all psr implementations will work right now, but it's a declaration of intentions
       and will be implemented sooner or later
@@ -42,6 +43,7 @@ This package is Yii 3.0 architecture changes proposal.
     - the config becomes the config of DI container holding configs for application
       and all the services (previously it was config of application)
     - allows to create matrioshka applications, please see [my article]
+    - also please see discussion https://github.com/hiqsol/core/issues/2
 - yii2-composer - not needed anymore
     - yii2-extension composer package type is not need, extensions will become `library`
     - also yii2-composer assembles `extensions.php` used for aliases and bootstrap
