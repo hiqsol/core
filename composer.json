@@ -1,7 +1,7 @@
 {
     "name": "hiqsol/core",
     "type": "library",
-    "description": "Core",
+    "description": "Yii 3.0 proposal :: NOT FOR ACTUAL USE",
     "keywords": [
         "core"
     ],
@@ -24,6 +24,7 @@
         "psr/container-implementation": "^1.0"
     },
     "require-dev": {
+        "yiisoft/di": "*@dev",
         "hiqdev/hidev-php": "<2.0 || dev-master",
         "hiqsol/hidev-hiqsol": "<2.0 || dev-master"
     },

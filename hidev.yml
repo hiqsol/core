@@ -1,7 +1,12 @@
 package:
     type:       library
     name:       core
-    title:      Core
-    headline:   Core
+    title:      "Yii 3.0 proposal :: NOT FOR ACTUAL USE"
+    headline:   "Yii 3.0 proposal :: NOT FOR ACTUAL USE"
     keywords:   core
     license:    BSD-3-Clause
+    description:
+        This package is Yii 3.0 architecture changes proposal.
+
+
+        # NOT INTENDED FOR ACTUAL USE
