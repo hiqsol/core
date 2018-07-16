@@ -1,7 +1,5 @@
 # Yii 3.0 proposal :: NOT FOR ACTUAL USE
 
-**Yii 3.0 proposal :: NOT FOR ACTUAL USE**
-
 [![Latest Stable Version](https://poser.pugx.org/hiqsol/core/v/stable)](https://packagist.org/packages/hiqsol/core)
 [![Total Downloads](https://poser.pugx.org/hiqsol/core/downloads)](https://packagist.org/packages/hiqsol/core)
 [![Build Status](https://img.shields.io/travis/hiqsol/core.svg)](https://travis-ci.org/hiqsol/core)
@@ -49,8 +47,7 @@ This package is Yii 3.0 architecture changes proposal.
     - also yii2-composer assembles `extensions.php` used for aliases and bootstrap
       composer-config-plugin does all the same but more effectively
 - think of completely remove bootstrap feature:
-    - чтобы дописать конфиг - composer-config-plugin
-    - it is mostly used to merge application config - composer-config-plugin
+    - it was mostly used by extensions to merge into application config - composer-config-plugin
       must be used for it
     - event triggers should be configured for all other cases
 - DI
@@ -90,8 +87,7 @@ This package is Yii 3.0 architecture changes proposal.
 - cleanup
     - rename folder `web` to `public`
     - rename alias `@webroot` to `@public`
-    - хочу сделать меньше файлов в нагруженых папках (base, web)- чуть больше папок, но не выращивая глубину
-    - I want to make less files in heavy loaded folders base, web, making a bit more folders,
+    - I want to make less files in heavy loaded folders (base, web), making a bit more folders,
       but without growing folder depth
         - move all exceptions to own folder in base and web
         - move web formatters to own folder

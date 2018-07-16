@@ -2,7 +2,6 @@ package:
     type:       library
     name:       core
     title:      "Yii 3.0 proposal :: NOT FOR ACTUAL USE"
-    headline:   "Yii 3.0 proposal :: NOT FOR ACTUAL USE"
     keywords:   core
     license:    BSD-3-Clause
     description:
