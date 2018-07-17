@@ -14,10 +14,10 @@ This package is Yii 3.0 architecture changes proposal.
 ## Idea
 
 - framework gets split into parts, not radically, but functionally
-    - `yiisoft/core` - all former framework byt all the following
+    - `yiisoft/core` - all former framework but all the following
     - `yiisoft/di` - as is, fixed some bugs
-    - `yiisfot/web` - everything from `web` and `filter` folders, can be used without yiisoft/console
-    - `yiisfot/console` - everything from `console` folder, can be used without yiisoft/web
+    - `yiisfot/yii-web` - everything from `web` and `filter` folders, can be used without yiisoft/console, but requires core
+    - `yiisfot/yii-console` - everything from `console` folder, can be used without yiisoft/web, but requires core
     - `yiisoft/log` - everything from `log` folder, any PSR compatible cache could be used, can be done framework independent
     - `yiisoft/cache` - everything from `caching` folder, any PSR compatible cache could be used, can be done framework independent
     - `yiisoft/db` - not all apps need it, can be done framework independent
@@ -27,6 +27,8 @@ This package is Yii 3.0 architecture changes proposal.
         - widgets
         - split db and ActiveRecord
     - also please see discussion https://github.com/hiqsol/core/issues/1
+- don't mention framework version anywhere besides version constraints in `composer.json` files
+    - rename yii extensions with `yii-` prefix
 - `yiisfot/core` requires only virtual psr implementations instead of concrete yii packages
     - actually not all psr implementations will work right now, but it's a declaration of intentions
       and will be implemented sooner or later
@@ -201,21 +203,21 @@ return [
 |--------:|---------------|----------------------|------------------------------------------------------------------|
 | 1008K   | db            | yiisoft/db           |                                                                  |
 | 828K    | messages      | yiisoft/core         | split to yiisoft/messages-ru yiisoft/messages-uk  ???            |
-| 588K    | web           | yiisoft/web          |                                                                  |
+| 588K    | web           | yiisoft/yii-web      |                                                                  |
 | 468K    | helpers       | yiisoft/core         |                                                                  |
 | 412K    | base          | yiisoft/core         |                                                                  |
-| 292K    | console       | yiisoft/console      |                                                                  |
+| 292K    | console       | yiisoft/yii-console  |                                                                  |
 | 212K    | validators    | yiisoft/core         |                                                                  |
 | 192K    | i18n          | yiisoft/core         |                                                                  |
 | 168K    | widgets       | yiisoft/core         |                                                                  |
-| 152K    | caching       | yiisoft/cache        | provides psr/simple-cache                                        |
+| 152K    | caching       | yiisoft/cache        | provides psr/simple-cache-implementation                         |
 | 148K    | rbac          | yiisoft/rbac         |                                                                  |
-| 132K    | filters       | yiisoft/web          |                                                                  |
+| 132K    | filters       | yiisoft/yii-web      |                                                                  |
 | 124K    | views         | yiisoft/core         |                                                                  |
 | 116K    | data          | yiisoft/core         |                                                                  |
 | 84K     | http          | yiisoft/core         |                                                                  |
-| 84K     | log           | yiisoft/log          | provides psr/log                                                 |
-| 76K     | behaviors     | yiisoft/core         |                                                                  |
+| 84K     | log           | yiisoft/log          | provides psr/log-implementation                                  |
+| 76K     | behaviors     | yiisoft/core         | db related to be moved to db                                     |
 | 72K     | grid          | yiisoft/core         |                                                                  |
 | 60K     | di            | yiisoft/di           | provides psr/container-implementation                            |
 | 52K     | requirements  | yiisoft/core         |                                                                  |
