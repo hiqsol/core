@@ -29,22 +29,25 @@ This package is Yii 3.0 architecture changes proposal.
     - also please see discussion https://github.com/hiqsol/core/issues/1
 - don't mention framework version anywhere besides version constraints in `composer.json` files
     - rename yii extensions with `yii-` prefix
+    - rule of thumb:
+        - if extension requires `yiisoft/core` directly or through dependencies - then prefix with `yii-`
+        - if extension can be used without yii (completely or partially) - name without `yii-` prefix
+        - if extension provides more functions with yii - suggest yii
 - `yiisfot/core` requires only virtual psr implementations instead of concrete yii packages
     - actually not all psr implementations will work right now, but it's a declaration of intentions
       and will be implemented sooner or later
-- every part provides it's own configuration in `config` folder, see examples belo
+- every part provides it's own configuration in `config` folder, see examples below
     - summary config is assembled with [composer-config-plugin], 
       we can think about other config assembling tool, but this one is already
       tested and there are no others :)
-    - I understand it is most arguable question but it can become main
-      framework feature
+    - I understand it is most arguable question but it can become main framework feature
     - allows to throw away things like coreComponents and other crutches like merging
       config parts available in the framework code
     - the config becomes the config of DI container holding configs for application
       and all the services (previously it was config of application)
-    - allows to create matrioshka applications, please see [my article]
+    - allows to create onion applications and plugins, please see [my article]
     - also please see discussion https://github.com/hiqsol/core/issues/2
-- yii2-composer - not needed anymore
+- `yii2-composer` - not needed anymore
     - yii2-extension composer package type is not need, extensions will become `library`
     - also yii2-composer assembles `extensions.php` used for aliases and bootstrap
       composer-config-plugin does all the same but more effectively
@@ -52,6 +55,7 @@ This package is Yii 3.0 architecture changes proposal.
     - it was mostly used by extensions to merge into application config - composer-config-plugin
       must be used for it
     - event triggers should be configured for all other cases
+        - which improves performance by running tasks not for every request but for certain only
 - DI
     - completely remove `ServiceLocator`, use DI instead
     - completely remove components support from `Application` and `Module`
