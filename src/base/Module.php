@@ -148,8 +148,6 @@ class Module extends Component
 
     protected $app;
 
-    protected $container;
-
     /**
      * Constructor.
      * @param string $id the ID of this module.
