@@ -754,12 +754,4 @@ class Module extends Component
         }
         return $component;
     }
-
-    /**
-     * Is component defined.
-     */
-    public function has($id): bool
-    {
-        return $this->container->has($id);
-    }
 }
