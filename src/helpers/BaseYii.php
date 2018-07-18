@@ -25,7 +25,11 @@ use yii\helpers\VarDumper;
 class BaseYii
 {
     /**
-     * @var Container
+     * @var Container the dependency injection (DI) container used by [[createObject()]].
+     * You may use [[Container::set()]] to set up the needed dependencies of classes and
+     * their initial property values.
+     * @see createObject()
+     * @see Container
      */
     protected static $container;
 
@@ -41,6 +45,65 @@ class BaseYii
     public static function getVersion()
     {
         return '3.0.0-dev';
+    }
+
+    /**
+     * Creates a new object using the given configuration.
+     *
+     * You may view this method as an enhanced version of the `new` operator.
+     * The method supports creating an object based on a class name, a configuration array or
+     * an anonymous function.
+     *
+     * Below are some usage examples:
+     *
+     * ```php
+     * // create an object using a class name
+     * $object = Yii::createObject(\yii\db\Connection::class);
+     *
+     * // create an object using a configuration array
+     * $object = Yii::createObject([
+     *     '__class' => \yii\db\Connection::class,
+     *     'dsn' => 'mysql:host=127.0.0.1;dbname=demo',
+     *     'username' => 'root',
+     *     'password' => '',
+     *     'charset' => 'utf8',
+     * ]);
+     *
+     * // create an object with two constructor parameters
+     * $object = \Yii::createObject('MyClass', [$param1, $param2]);
+     * ```
+     *
+     * Using [[\yii\di\Container|dependency injection container]], this method can also identify
+     * dependent objects, instantiate them and inject them into the newly created object.
+     *
+     * @param string|array|callable $type the object type. This can be specified in one of the following forms:
+     *
+     * - a string: representing the class name of the object to be created
+     * - a configuration array: the array must contain a `class` element which is treated as the object class,
+     *   and the rest of the name-value pairs will be used to initialize the corresponding object properties
+     * - a PHP callable: either an anonymous function or an array representing a class method (`[$class or $object, $method]`).
+     *   The callable should return a new instance of the object being created.
+     *
+     * @param array $params the constructor parameters
+     * @return object the created object
+     * @throws InvalidConfigException if the configuration is invalid.
+     * @see \yii\di\Container
+     */
+    public static function createObject($type, array $params = [])
+    {
+        if (is_string($type)) {
+            return static::get('factory')->create($type, [], $params);
+        } elseif (is_array($type) && isset($type['__class'])) {
+            $class = $type['__class'];
+            unset($type['__class']);
+            return static::get('factory')->create($class, $type, $params);
+        } elseif (is_callable($type, true)) {
+            return static::get('injector')->invoke($type, $params);
+        } elseif (is_array($type)) {
+            throw new InvalidConfigException('Object configuration must be an array containing a "__class" element.');
+        }
+
+        throw new InvalidConfigException('Unsupported configuration type: ' . gettype($type));
     }
 
     public static function getCharset()
@@ -239,64 +302,4 @@ class BaseYii
     {
         return get_object_vars($object);
     }
-    /**
-     * Creates a new object using the given configuration.
-     *
-     * You may view this method as an enhanced version of the `new` operator.
-     * The method supports creating an object based on a class name, a configuration array or
-     * an anonymous function.
-     *
-     * Below are some usage examples:
-     *
-     * ```php
-     * // create an object using a class name
-     * $object = Yii::createObject(\yii\db\Connection::class);
-     *
-     * // create an object using a configuration array
-     * $object = Yii::createObject([
-     *     '__class' => \yii\db\Connection::class,
-     *     'dsn' => 'mysql:host=127.0.0.1;dbname=demo',
-     *     'username' => 'root',
-     *     'password' => '',
-     *     'charset' => 'utf8',
-     * ]);
-     *
-     * // create an object with two constructor parameters
-     * $object = \Yii::createObject('MyClass', [$param1, $param2]);
-     * ```
-     *
-     * Using [[\yii\di\Container|dependency injection container]], this method can also identify
-     * dependent objects, instantiate them and inject them into the newly created object.
-     *
-     * @param string|array|callable $type the object type. This can be specified in one of the following forms:
-     *
-     * - a string: representing the class name of the object to be created
-     * - a configuration array: the array must contain a `class` element which is treated as the object class,
-     *   and the rest of the name-value pairs will be used to initialize the corresponding object properties
-     * - a PHP callable: either an anonymous function or an array representing a class method (`[$class or $object, $method]`).
-     *   The callable should return a new instance of the object being created.
-     *
-     * @param array $params the constructor parameters
-     * @return object the created object
-     * @throws InvalidConfigException if the configuration is invalid.
-     * @see \yii\di\Container
-     */
-    public static function createObject($type, array $params = [])
-    {
-        if (is_string($type)) {
-            return static::get('factory')->create($type, [], $params);
-        } elseif (is_array($type) && isset($type['__class'])) {
-            $class = $type['__class'];
-            unset($type['__class']);
-            return static::get('factory')->create($class, $type, $params);
-        } elseif (is_callable($type, true)) {
-            return static::get('injector')->invoke($type, $params);
-        } elseif (is_array($type)) {
-            var_dump($type);
-            throw new InvalidConfigException('Object configuration must be an array containing a "__class" element.');
-        }
-
-        throw new InvalidConfigException('Unsupported configuration type: ' . gettype($type));
-    }
-    
 }
