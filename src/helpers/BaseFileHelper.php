@@ -611,7 +611,7 @@ class BaseFileHelper
      * @param int $mode the permission to be set for the created directory.
      * @param bool $recursive whether to create parent directories if they do not exist.
      * @return bool whether the directory is created successfully
-     * @throws \yii\base\Exception if the directory could not be created (i.e. php error due to parallel changes)
+     * @throws \yii\exceptions\Exception if the directory could not be created (i.e. php error due to parallel changes)
      */
     public static function createDirectory($path, $mode = 0775, $recursive = true)
     {

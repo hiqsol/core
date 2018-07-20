@@ -301,6 +301,7 @@ class View extends Component implements DynamicContentAwareInterface
     public function beforeRender($viewFile, $params)
     {
         $event = new ViewEvent([
+            'name' => self::EVENT_BEFORE_RENDER,
             'viewFile' => $viewFile,
             'params' => $params,
         ]);
@@ -322,6 +323,7 @@ class View extends Component implements DynamicContentAwareInterface
     {
         if ($this->hasEventHandlers(self::EVENT_AFTER_RENDER)) {
             $event = new ViewEvent([
+                'name' => self::EVENT_BEFORE_RENDER,
                 'viewFile' => $viewFile,
                 'params' => $params,
                 'output' => $output,
