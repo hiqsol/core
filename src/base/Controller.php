@@ -75,23 +75,16 @@ class Controller extends Component implements ViewContextInterface
 
     protected $app;
 
-    protected $request;
-
-    protected $response;
-
-
     /**
      * @param string $id the ID of this controller.
      * @param Module $module the module that this controller belongs to.
      * @param array $config name-value pairs that will be used to initialize the object properties.
      */
-    public function __construct($id, $module, Application $app, Request $request, Response $response)
+    public function __construct($id, $module, Application $app)
     {
         $this->id = $id;
         $this->module = $module;
         $this->app = $app;
-        $this->request = $request;
-        $this->response = $response;
     }
 
     /**
