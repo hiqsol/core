@@ -7,10 +7,9 @@
 
 namespace yii\base;
 
+use Psr\Container\ContainerInterface;
 use yii\exceptions\InvalidConfigException;
 use yii\exceptions\InvalidArgumentException;
-use yii\di\Container;
-
 
 /**
  * Application is the base class for all application classes.
@@ -191,28 +190,42 @@ abstract class Application extends Module
 
     protected $container;
 
+    protected $request;
+
+    protected $response;
+
     /**
      * Constructor.
      * @param array $config name-value pairs that will be used to initialize the object properties.
      * Note that the configuration must contain both [[id]] and [[basePath]].
      * @throws InvalidConfigException if either [[id]] or [[basePath]] configuration is missing.
      */
-    public function __construct(Container $container)
+    public function __construct(ContainerInterface $container)
     {
         $this->app = $this;
 
         $this->container = $container;
 
         $this->state = self::STATE_BEGIN;
-
-        //$this->preInit($config);
-
-        //Component::__construct($config);
     }
 
     public function getRequest()
     {
-        return $this->container->get('request');
+        if ($this->request === null) {
+            $this->request = $this->container->get('request');
+        }
+
+        return $this->request;
+    }
+
+    public function getResponse()
+    {
+        return $this->response;
+    }
+
+    public function hasResponse(): bool
+    {
+        return $this->response !== null;
     }
 
     public function getErrorHandler()
@@ -223,133 +236,6 @@ abstract class Application extends Module
     public function getView()
     {
         return $this->container->get('view');
-    }
-
-    /**
-     * Pre-initializes the application.
-     * This method is called at the beginning of the application constructor.
-     * It initializes several important application properties.
-     * If you override this method, please make sure you call the parent implementation.
-     * @param array $config the application configuration
-     * @throws InvalidConfigException if either [[id]] or [[basePath]] configuration is missing.
-     */
-    public function preInit(&$config)
-    {
-        if (!isset($config['id'])) {
-            throw new InvalidConfigException('The "id" configuration for the Application is required.');
-        }
-        if (isset($config['basePath'])) {
-            $this->setBasePath($config['basePath']);
-            unset($config['basePath']);
-        } else {
-            throw new InvalidConfigException('The "basePath" configuration for the Application is required.');
-        }
-
-        if (isset($config['vendorPath'])) {
-            $this->setVendorPath($config['vendorPath']);
-            unset($config['vendorPath']);
-        } else {
-            // set "@vendor"
-            $this->getVendorPath();
-        }
-        if (isset($config['runtimePath'])) {
-            $this->setRuntimePath($config['runtimePath']);
-            unset($config['runtimePath']);
-        } else {
-            // set "@runtime"
-            $this->getRuntimePath();
-        }
-
-        if (isset($config['timeZone'])) {
-            $this->setTimeZone($config['timeZone']);
-            unset($config['timeZone']);
-        }
-
-        if (isset($config['logger'])) {
-            $this->setLogger($config['logger']);
-            unset($config['logger']);
-        }
-
-        if (isset($config['profiler'])) {
-            $this->setProfiler($config['profiler']);
-            unset($config['profiler']);
-        }
-
-        //    // merge core components with custom components
-        //    foreach ($this->coreComponents() as $id => $component) {
-        //        if (!isset($config['components'][$id])) {
-        //            $config['components'][$id] = $component;
-        //        } elseif (is_array($config['components'][$id]) && !isset($config['components'][$id]['__class'])) {
-        //            $config['components'][$id]['__class'] = $component['__class'];
-        //        }
-        //    }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function init()
-    {
-        $this->state = self::STATE_INIT;
-        $this->bootstrap();
-    }
-
-    /**
-     * Initializes extensions and executes bootstrap components.
-     * This method is called by [[init()]] after the application has been fully configured.
-     * If you override this method, make sure you also call the parent implementation.
-     */
-    protected function bootstrap()
-    {
-        if ($this->extensions === null) {
-            $file = $this->getAlias('@vendor/yiisoft/extensions.php');
-            $this->extensions = is_file($file) ? include $file : [];
-        }
-        foreach ($this->extensions as $extension) {
-            if (!empty($extension['alias'])) {
-                foreach ($extension['alias'] as $name => $path) {
-                    $this->setAlias($name, $path);
-                }
-            }
-            if (isset($extension['bootstrap'])) {
-                $component = Yii::createObject($extension['bootstrap']);
-                if ($component instanceof BootstrapInterface) {
-                    Yii::debug('Bootstrap with ' . get_class($component) . '::bootstrap()', __METHOD__);
-                    $component->bootstrap($this);
-                } else {
-                    Yii::debug('Bootstrap with ' . get_class($component), __METHOD__);
-                }
-            }
-        }
-
-        foreach ($this->bootstrap as $mixed) {
-            $component = null;
-            if ($mixed instanceof \Closure) {
-                Yii::debug('Bootstrap with Closure', __METHOD__);
-                if (!$component = call_user_func($mixed, $this)) {
-                    continue;
-                }
-            } elseif (is_string($mixed)) {
-                if ($this->has($mixed)) {
-                    $component = $this->get($mixed);
-                } elseif ($this->hasModule($mixed)) {
-                    $component = $this->getModule($mixed);
-                } elseif (strpos($mixed, '\\') === false) {
-                    throw new InvalidConfigException("Unknown bootstrapping component ID: $mixed");
-                }
-            }
-
-            if (!isset($component)) {
-                $component = Yii::createObject($mixed);
-            }
-
-            if ($component instanceof BootstrapInterface) {
-                Yii::debug('Bootstrap with ' . get_class($component) . '::bootstrap()', __METHOD__);
-                $component->bootstrap($this);
-            } else {
-                Yii::debug('Bootstrap with ' . get_class($component), __METHOD__);
-            }
-        }
     }
 
     /**
@@ -394,19 +280,19 @@ abstract class Application extends Module
             $this->trigger(self::EVENT_BEFORE_REQUEST);
 
             $this->state = self::STATE_HANDLING_REQUEST;
-            $response = $this->handleRequest($this->getRequest());
+            $this->response = $this->handleRequest($this->getRequest());
 
             $this->state = self::STATE_AFTER_REQUEST;
             $this->trigger(self::EVENT_AFTER_REQUEST);
 
             $this->state = self::STATE_SENDING_RESPONSE;
-            $response->send();
+            $this->response->send();
 
             $this->state = self::STATE_END;
 
-            return $response->exitStatus;
+            return $this->response->exitStatus;
         } catch (ExitException $e) {
-            $this->end($e->statusCode, $response ?? null);
+            $this->end($e->statusCode, $this->response ?? null);
             return $e->statusCode;
         }
     }
@@ -519,8 +405,8 @@ abstract class Application extends Module
 
         if ($this->state !== self::STATE_SENDING_RESPONSE && $this->state !== self::STATE_END) {
             $this->state = self::STATE_END;
-            $response = $response ?: $this->getResponse();
-            $response->send();
+            $this->response = $response ?: $this->getResponse();
+            $this->response->send();
         }
 
         if (YII_ENV_TEST) {
@@ -530,7 +416,7 @@ abstract class Application extends Module
         exit($status);
     }
 
-    public static $aliases = [];
+    protected $aliases = [];
 
     /**
      * Translates a path alias into an actual path.
@@ -564,14 +450,14 @@ abstract class Application extends Module
      * @throws InvalidArgumentException if the alias is invalid while $throwException is true.
      * @see setAlias()
      */
-    public static function getAlias($alias, $throwException = true)
+    public function getAlias($alias, $throwException = true)
     {
         if (strncmp($alias, '@', 1)) {
             // not an alias
             return $alias;
         }
 
-        $result = static::findAlias($alias);
+        $result = $this->findAlias($alias);
 
         if (is_array($result)) {
             return $result['path'];
@@ -591,9 +477,9 @@ abstract class Application extends Module
      * @param string $alias the alias
      * @return string|bool the root alias, or false if no root alias is found
      */
-    public static function getRootAlias($alias)
+    public function getRootAlias($alias)
     {
-        $result = static::findAlias($alias);
+        $result = $this->findAlias($alias);
         if (is_array($result)) {
             $result = $result['root'];
         }
@@ -604,17 +490,17 @@ abstract class Application extends Module
      * @param string $alias
      * @return array|bool
      */
-    protected static function findAlias(string $alias)
+    protected function findAlias(string $alias)
     {
         $pos = strpos($alias, '/');
         $root = $pos === false ? $alias : substr($alias, 0, $pos);
 
-        if (isset(static::$aliases[$root])) {
-            if (is_string(static::$aliases[$root])) {
-                return ['root' => $root, 'path' => $pos === false ? static::$aliases[$root] : static::$aliases[$root] . substr($alias, $pos)];
+        if (isset($this->aliases[$root])) {
+            if (is_string($this->aliases[$root])) {
+                return ['root' => $root, 'path' => $pos === false ? $this->aliases[$root] : $this->aliases[$root] . substr($alias, $pos)];
             }
 
-            foreach (static::$aliases[$root] as $name => $path) {
+            foreach ($this->aliases[$root] as $name => $path) {
                 if (strpos($alias . '/', $name . '/') === 0) {
                     return ['root' => $name, 'path' => $path . substr($alias, strlen($name))];
                 }
@@ -654,7 +540,7 @@ abstract class Application extends Module
      * @throws InvalidArgumentException if $path is an invalid alias.
      * @see getAlias()
      */
-    public static function setAlias($alias, $path)
+    public function setAlias($alias, $path)
     {
         if (strncmp($alias, '@', 1)) {
             $alias = '@' . $alias;
@@ -662,31 +548,31 @@ abstract class Application extends Module
         $pos = strpos($alias, '/');
         $root = $pos === false ? $alias : substr($alias, 0, $pos);
         if ($path !== null) {
-            $path = strncmp($path, '@', 1) ? rtrim($path, '\\/') : static::getAlias($path);
-            if (!isset(static::$aliases[$root])) {
+            $path = strncmp($path, '@', 1) ? rtrim($path, '\\/') : $this->getAlias($path);
+            if (!isset($this->aliases[$root])) {
                 if ($pos === false) {
-                    static::$aliases[$root] = $path;
+                    $this->aliases[$root] = $path;
                 } else {
-                    static::$aliases[$root] = [$alias => $path];
+                    $this->aliases[$root] = [$alias => $path];
                 }
-            } elseif (is_string(static::$aliases[$root])) {
+            } elseif (is_string($this->aliases[$root])) {
                 if ($pos === false) {
-                    static::$aliases[$root] = $path;
+                    $this->aliases[$root] = $path;
                 } else {
-                    static::$aliases[$root] = [
+                    $this->aliases[$root] = [
                         $alias => $path,
-                        $root => static::$aliases[$root],
+                        $root => $this->aliases[$root],
                     ];
                 }
             } else {
-                static::$aliases[$root][$alias] = $path;
-                krsort(static::$aliases[$root]);
+                $this->aliases[$root][$alias] = $path;
+                krsort($this->aliases[$root]);
             }
-        } elseif (isset(static::$aliases[$root])) {
-            if (is_array(static::$aliases[$root])) {
-                unset(static::$aliases[$root][$alias]);
+        } elseif (isset($this->aliases[$root])) {
+            if (is_array($this->aliases[$root])) {
+                unset($this->aliases[$root][$alias]);
             } elseif ($pos === false) {
-                unset(static::$aliases[$root]);
+                unset($this->aliases[$root]);
             }
         }
     }
