@@ -72,7 +72,9 @@ class Controller extends Component implements ViewContextInterface
      * @var string the root directory that contains view files for this controller.
      */
     private $_viewPath;
-
+    /**
+     * @var Application the application.
+     */
     protected $app;
 
     /**
